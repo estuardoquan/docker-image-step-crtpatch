@@ -1,4 +1,4 @@
 all:
 
 step-renewer:
-	docker build -t proxymurder/smallstep:renewer ./
+	docker build -t proxymurder/step:renewer ./
