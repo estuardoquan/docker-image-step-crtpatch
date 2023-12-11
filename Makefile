@@ -1,4 +1,4 @@
-all: smallstep
+all: docker-smallstep-service
 
-smallstep:
+docker-smallstep-service:
 	docker build -t proxymurder/smallstep:latest ./
