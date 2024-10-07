@@ -1,4 +1,6 @@
-all: docker-smallstep-service
+all: docker
 
-docker-smallstep-service:
-	docker build -t proxymurder/smallstep:latest ./
+docker: docker-build-crtpatch
+
+docker-build-crtpatch:
+	docker build -t ouestdarq/crtpatch:latest ./

@@ -2,31 +2,24 @@ FROM smallstep/step-cli
 
 USER root
 
-# Install executables
-COPY ./docker-entrypoint /docker-entrypoint
-COPY ./renewer /usr/local/bin/renewer
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./renewer.sh /usr/local/bin/renewer.sh
 
-# Install crontabs
 ADD ./crontab /etc/crontabs/root
 
-# Install permissions
-RUN chmod +x /docker-entrypoint /usr/local/bin/renewer
-RUN chmod 0644 /etc/crontabs/root
+RUN mkdir -p /var/local/step && \
+    chown step:step /var/local/step && \
+    chmod +x /docker-entrypoint.sh && \
+    chmod +x /usr/local/bin/renewer.sh && \
+    chmod 0644 /etc/crontabs/root  
+ 
 
-# Install workdir
-RUN mkdir -p /var/local/step
-RUN chown step:step /var/local/step
-
-HEALTHCHECK CMD step ca health 2>/dev/null | grep "^ok" >/dev/null
+HEALTHCHECK CMD step ca health 2> /dev/null | grep "^ok" > /dev/null
 
 USER step
 
-ENV SITECRT=/var/local/step/site.crt
-ENV SITEKEY=/var/local/step/site.key
-
 WORKDIR /var/local/step
 
-# Install certificates
-ENTRYPOINT ["/docker-entrypoint"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 CMD ["/usr/sbin/crond", "-l", "2", "-f"]

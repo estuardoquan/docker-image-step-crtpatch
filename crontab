@@ -1,1 +1,4 @@
-*	*	*/10    *	*	renewer
+# At 11:59 PM on every day of the month;
+# run renewer.sh
+#
+59	23	*/1    *	*	renewer.sh

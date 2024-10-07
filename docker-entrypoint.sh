@@ -1,16 +1,23 @@
 #!/bin/sh
+# Export required variabls for step ca
+#
+export SITECRT="${STEP_INIT_CRT:-/var/local/step/site.crt}"
+export SITEKEY="${STEP_INIT_KEY:-/var/local/step/site.key}"
+
 STEP_INIT_NAME="${STEP_INIT_NAME:-local.site}"
 
-function __root () {
-    rm -f "${STEP_ROOT}" \
-    && printf "%s\n" "${STEP_ROOT} removed"
-    rm -f "${SITECRT}" "${SITEKEY}" \
-    && printf "%s\n%s\n" "${SITECRT} removed" "${SITEKEY} removed"
+function update_root () {
+    rm -f "${STEP_ROOT}" && \
+    printf "%s\n" "${STEP_ROOT} removed"
+    
+    rm -f "${SITECRT}" "${SITEKEY}" && \
+    printf "%s\n%s\n" "${SITECRT} removed" "${SITEKEY} removed"
+    
     step ca root "${STEP_ROOT}"
 }
 
-function __token () {
-    local map="local test"
+function get_token () {
+    local map="local"
     
     if [ -n ${STEP_INIT_MAP} ]; then
         map="${map} ${STEP_INIT_MAP}"
@@ -28,21 +35,21 @@ function __token () {
                 --san "*.${domain}.${val}"
             done
         done
-    fi
-    
-    unset domain
+        unset domain val
+    fi    
+
     if [ -n "${STEP_INIT_SAN}" ]; then
         for san in $STEP_INIT_SAN; do
             set -- ${@} \
             --san "${san}"
         done
+        unset san
     fi
     
-    unset san
     step ca token ${@}
 }
 
-function __certificate () {
+function get_certificate () {
     TOKEN=$1
     shift 1
     if [ -n "${TOKEN}" ]; then
@@ -55,10 +62,10 @@ function __certificate () {
     fi
 }
 
-function __init () {
-    __root
-    __certificate $(__token)
+function init () {
+    update_root
+    get_certificate $(get_token)
 }
 
-__init
+init
 exec "${@}"
