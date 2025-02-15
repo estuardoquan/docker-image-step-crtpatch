@@ -67,14 +67,14 @@ function get_token () {
 function init () {
     update_root "${SITECRT}" "${SITEKEY}" "${STEP_ROOT}" && \
         printf "[%s]: %s\n" "${FUNCNAME}" "Certificates updated successfully" || \
-        exit 1
+        return 1
 
 
     local token=$(get_token "${STEP_INIT_NAME}" "${STEP_INIT_DNS}" "${STEP_INIT_SAN}")
     
     if [[ $token == -1 ]]; then
         printf "[%s] ERROR: %s\n" "${FUNCNAME}" "Token could not be retrieved" >&2
-        exit 1
+        return 1
     else    
         printf "[%s]: %s\n" "${FUNCNAME}" "Token retrieved successfully"
     fi
@@ -88,6 +88,8 @@ function init () {
     step ca certificate ${@}
 }
 
-init
+init && \
+    printf "%s\n" "Step CA initialized" || \
+    printf "%s\n" "Error initializing Step CA"
 
 exec "${@}"
