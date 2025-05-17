@@ -14,7 +14,7 @@ RUN mkdir -p ${STEPPATH} && \
     chown -R step:step ${STEPPATH} && \
     chmod +x /docker-entrypoint.sh 
 
-HEALTHCHECK CMD step ca health 2> /dev/null | grep "^ok" > /dev/null
+HEALTHCHECK --interval=3h CMD step ca health 2> /dev/null | grep "^ok" > /dev/null
 
 WORKDIR ${STEPPATH}
 

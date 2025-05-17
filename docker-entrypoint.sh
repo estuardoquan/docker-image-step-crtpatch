@@ -71,7 +71,7 @@ function init () {
 
 
     local token=$(get_token "${STEP_INIT_NAME}" "${STEP_INIT_DNS}" "${STEP_INIT_SAN}")
-    
+
     if [[ $token == -1 ]]; then
         printf "[%s] ERROR: %s\n" "${FUNCNAME}" "Token could not be retrieved" >&2
         return 1
